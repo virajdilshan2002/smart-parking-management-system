@@ -15,7 +15,10 @@ import lombok.Setter;
 @Table(name = "user")
 public class User {
     @Id
-    @Column(name = "email")
     private String email;
+    private String username;
     private String password;
+    private String contact;
+    private String address;
+    private String role;
 }
