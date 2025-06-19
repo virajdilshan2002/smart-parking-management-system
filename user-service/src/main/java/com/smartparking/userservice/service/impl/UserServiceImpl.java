@@ -7,11 +7,15 @@ import com.smartparking.userservice.service.UserService;
 import com.smartparking.userservice.util.VarList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -37,7 +41,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDTO getUserByEmail(String email) {
-        return userRepository.getByEmail(email);
+        User user = userRepository.getByEmail(email);
+        return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
@@ -46,7 +51,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.getReferenceById(email);
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthority(user));
+    }
+
+    private Set<SimpleGrantedAuthority> getAuthority(User user) {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole()));
+        return authorities;
     }
 }
