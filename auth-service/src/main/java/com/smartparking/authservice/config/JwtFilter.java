@@ -1,8 +1,5 @@
 package com.smartparking.authservice.config;
 
-
-import com.smartparking.authservice.dto.UserDTO;
-import com.smartparking.authservice.feign.UserInterface;
 import com.smartparking.authservice.service.CustomUserDetailsService;
 import com.smartparking.authservice.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -11,11 +8,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
