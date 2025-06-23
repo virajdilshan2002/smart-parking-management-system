@@ -51,6 +51,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public int updateUser(UserDTO userDTO) {
+        if (userRepository.existsById(userDTO.getEmail())) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userRepository.save(modelMapper.map(userDTO, User.class));
+            return  VarList.OK;
+        }
+        return VarList.Bad_Gateway;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.getReferenceById(email);
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthority(user));

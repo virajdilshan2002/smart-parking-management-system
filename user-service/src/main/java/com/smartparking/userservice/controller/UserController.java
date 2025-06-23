@@ -3,8 +3,8 @@ package com.smartparking.userservice.controller;
 import com.smartparking.userservice.dto.AuthDTO;
 import com.smartparking.userservice.dto.ResponseDTO;
 import com.smartparking.userservice.dto.UserDTO;
+import com.smartparking.userservice.feign.service.CustomAuthService;
 import com.smartparking.userservice.service.UserService;
-import com.smartparking.userservice.util.JwtUtil;
 import com.smartparking.userservice.util.VarList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,41 +14,31 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@CrossOrigin
 public class UserController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+    private final CustomAuthService customAuthService;
 
-    public UserController(UserService userService, JwtUtil jwtUtil) {
+    public UserController(UserService userService, CustomAuthService customAuthService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
+        this.customAuthService = customAuthService;
     }
 
-    @GetMapping("/retrieve")
+
+    @PutMapping("/update")
     @PreAuthorize("hasAuthority('USER')")
-    public String retrieveUser(@RequestHeader("Authorization") String authorization) {
-        return "Access granted!";
+    public ResponseEntity<ResponseDTO> retrieveUser(@RequestHeader("Authorization") String authorization, @RequestBody UserDTO userDTO) {
+        int status = userService.updateUser(userDTO);
+        return switch (status) {
+            case VarList.OK ->
+                    ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(VarList.OK, "User Updated Success", userDTO));
+            case VarList.Bad_Gateway ->
+                    ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ResponseDTO(VarList.Bad_Gateway, "Error", null));
+            default ->
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(VarList.Internal_Server_Error, "Error", null));
+        };
 
-    }
-
-    @GetMapping("/isExists/{email}")
-    ResponseEntity<Boolean> existsByEmail(@PathVariable String email) {
-        try {
-            boolean exists = userService.existsByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).body(exists);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
-        }
-    }
-
-    @GetMapping("/get/{email}")
-    ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
-        try {
-            UserDTO userDTO = userService.getUserByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).body(userDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
     }
 
     @PostMapping("/register")
@@ -57,7 +47,7 @@ public class UserController {
             int status = userService.saveUser(userDTO);
             switch (status) {
                 case VarList.Created -> {
-                    String token = jwtUtil.generateToken(userDTO);
+                    String token = customAuthService.generateToken(userDTO);
                     AuthDTO authDTO = new AuthDTO();
                     authDTO.setUser(userDTO);
                     authDTO.setToken(token);
@@ -82,6 +72,28 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userDetails);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
+    // Feign End Points
+    @GetMapping("/get/{email}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+        try {
+            UserDTO userDTO = userService.getUserByEmail(email);
+            return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/isExists/{email}")
+    public ResponseEntity<Boolean> existsByEmail(@PathVariable String email) {
+        try {
+            boolean exists = userService.existsByEmail(email);
+            return ResponseEntity.status(HttpStatus.OK).body(exists);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 }

@@ -14,8 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "api/v1/auth")
-@CrossOrigin
+@RequestMapping(path = "/api/v1/auth")
 public class AuthController {
 
     private final JwtUtil jwtUtil;
@@ -57,5 +56,17 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDTO(VarList.Created, "Authorization Success", authDTO));
+    }
+
+    // Feign Client Methods
+    @PostMapping(path = "/validate")
+    public ResponseEntity<String> generateToken(@RequestBody UserDTO userDTO) {
+        String token = jwtUtil.generateToken(userDTO);
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Authorization Failure! Please Try Again");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(token);
     }
 }

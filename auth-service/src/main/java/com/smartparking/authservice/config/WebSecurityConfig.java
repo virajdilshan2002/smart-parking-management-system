@@ -47,6 +47,7 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/api/v1/auth/validate",
                                 "/api/v1/auth/authenticate",
                                 "/api/v1/user/register",
                                 "/v3/api-docs/**",

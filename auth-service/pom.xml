@@ -73,7 +73,7 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!--		JJWT DEPENDENCIES-->
+        <!--		JWT DEPENDENCIES-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
