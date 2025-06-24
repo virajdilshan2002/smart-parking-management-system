@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Vehicle {
     @Id
     private String licensePlate;
-    private String category;
     private String model;
+    private String type;
     private String userEmail;
 }

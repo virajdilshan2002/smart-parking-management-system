@@ -10,7 +10,14 @@
         <option value="$PROJECT_DIR$/vehicle-service/pom.xml" />
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
         <option value="$PROJECT_DIR$/auth-service/pom.xml" />
+        <option value="$PROJECT_DIR$/parking-space-service/pom.xml" />
+        <option value="$PROJECT_DIR$/security-lib/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/security-lib/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="openjdk-24" project-jdk-type="JavaSDK">
