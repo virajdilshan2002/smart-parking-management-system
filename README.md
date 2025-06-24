@@ -9,7 +9,7 @@ A microservice-based backend project built with Spring Boot and Spring Cloud.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/smart-parking-management-system.git
+   https://github.com/virajdilshan2002/smart-parking-management-system.git
    ```
 
 2. **Run the following services in this exact order:**
